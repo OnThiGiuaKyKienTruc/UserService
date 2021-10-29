@@ -3,6 +3,7 @@ package com.example.users.Controllers;
 import com.example.users.Entity.User;
 import com.example.users.Service.UserService;
 import com.example.users.VO.ResponseTemplateVO;
+import io.github.resilience4j.retry.annotation.Retry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;

@@ -6,3 +6,10 @@ spring:
       uri: http://localhost:8888
 
 #welcome: "Hello Vinh"
+
+resilience4j:
+  retry:
+    instances:
+      basic:
+        maxRetryAttempts: 3
+        waitDuration: 9s
