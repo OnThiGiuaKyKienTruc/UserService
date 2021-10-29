@@ -13,3 +13,11 @@ resilience4j:
       basic:
         maxRetryAttempts: 3
         waitDuration: 9s
+
+  ratelimiter:
+    instances:
+      # RateLimiter object used in RateLimitingService.basicExample()
+      basicExample:
+        limitForPeriod: 2
+        limitRefreshPeriod: 5s
+        timeoutDuration: 10s

@@ -4,6 +4,7 @@ import com.example.users.Entity.User;
 import com.example.users.Repository.UserRepository;
 import com.example.users.VO.Order;
 import com.example.users.VO.ResponseTemplateVO;
+import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import io.github.resilience4j.retry.annotation.Retry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,7 @@ public class UserService {
     }
 
     @Retry(name = "basic")
+    @RateLimiter(name = "basicExample")
     public ResponseTemplateVO getUserWithDepartment(Long userId) {
         ResponseTemplateVO vo = new ResponseTemplateVO();
         User user = userRepository.findById(userId).get();
