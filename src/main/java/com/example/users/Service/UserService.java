@@ -4,32 +4,45 @@ import com.example.users.Entity.User;
 import com.example.users.Repository.UserRepository;
 import com.example.users.VO.Order;
 import com.example.users.VO.ResponseTemplateVO;
+import com.example.users.authen.UserPrincipal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Service
 public class UserService {
     @Autowired
     private UserRepository userRepository;
-    @Autowired
-    private RestTemplate restTemplate;
 
-    public User saveUser(User user) {
-        return userRepository.save(user);
+
+    public User createUser(User user) {
+        return userRepository.saveAndFlush(user);
     }
 
-    public ResponseTemplateVO getUserWithDepartment(Long userId) {
-        ResponseTemplateVO vo = new ResponseTemplateVO();
-        User user = userRepository.findById(userId).get();
-        vo.setUser(user);
-        Order order =
-                restTemplate.getForObject("http://localhost:9001/order/"
-                                + user.getOrderId(),
-                        Order.class);
+    public UserPrincipal findByUsername(String username) {
+        User user = userRepository.findByUsername(username);
+        UserPrincipal userPrincipal = new UserPrincipal();
 
-        vo.setOrder(order);
+        if (null != user) {
+            Set<String> authorities = new HashSet<>();
+            if (null != user.getRoles())
 
-        return vo;
+                user.getRoles().forEach(r -> {
+                    authorities.add(r.getRoleKey());
+                    r.getPermissions().forEach(
+                            p -> authorities.add(p.getPermissionKey()));
+                });
+
+            userPrincipal.setUserId(user.getId());
+            userPrincipal.setUsername(user.getUsername());
+            userPrincipal.setPassword(user.getPassword());
+            userPrincipal.setAuthorities(authorities);
+        }
+
+        return userPrincipal;
+
     }
 }
